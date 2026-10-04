@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاختبار الأسبوعي: تقنيات التشفير والمصادقة | منصة كودجي CodeGY</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #fffffe;
+            --subtext-color: #94a3b8;
+            --accent-color: #0284c7;
+            --accent-hover: #0369a1;
+            --gold-color: #f59e0b;
+            --success-color: #16a34a;
+            --wrong-color: #dc2626;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* شريط التقدم */
+        .top-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-color), var(--gold-color));
+            transition: width 0.3s ease;
+        }
+
+        /* المؤقت الزمني */
+        .timer-box {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #38bdf8;
+            z-index: 999;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 999;
+        }
+
+        .copy-success {
+            position: fixed;
+            top: 20px;
+            right: 50%;
+            transform: translateX(50%);
+            background: var(--success-color);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: none;
+            z-index: 1001;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .copy-success.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* الهيدر */
+        header {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            border-bottom: 3px solid var(--gold-color);
+            padding: 25px 15px;
+            text-align: center;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .brand-text h1 {
+            font-size: 1.6rem;
+            color: #38bdf8;
+            margin-bottom: 4px;
+        }
+
+        .brand-text p {
+            font-size: 1rem;
+            color: var(--subtext-color);
+        }
+
+        .header-badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-ib {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+
+        /* الحاوية الرئيسية والتبويبات */
+        .container {
+            max-width: 850px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-nav-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--subtext-color);
+            font-weight: bold;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .tab-nav-btn.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* الكروت */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            color: #38bdf8;
+            margin-bottom: 12px;
+        }
+
+        .info-block.warning {
+            background: rgba(245, 158, 11, 0.08);
+            border-right: 4px solid var(--gold-color);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-copy {
+            background: #8b5cf6;
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+        }
+
+        .btn-copy:hover {
+            background: #7c3aed;
+        }
+
+        /* أسئلة الاختبار */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .badge-accent {
+            background: rgba(2, 132, 199, 0.2);
+            color: #38bdf8;
+            border: 1px solid var(--accent-color);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 18px 0;
+            line-height: 1.7;
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-item {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-item:hover {
+            border-color: var(--accent-color);
+        }
+
+        .option-item.correct {
+            background: rgba(22, 163, 74, 0.2);
+            border-color: var(--success-color);
+            color: #4ade80;
+        }
+
+        .option-item.wrong {
+            background: rgba(220, 38, 38, 0.2);
+            border-color: var(--wrong-color);
+            color: #f87171;
+        }
+
+        .essay-area {
+            width: 100%;
+            min-height: 120px;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            padding: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            resize: vertical;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .feedback-msg {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .feedback-msg.correct {
+            background: rgba(22, 163, 74, 0.15);
+            color: #4ade80;
+            border: 1px solid var(--success-color);
+        }
+
+        .feedback-msg.wrong {
+            background: rgba(220, 38, 38, 0.15);
+            color: #f87171;
+            border: 1px solid var(--wrong-color);
+        }
+
+        /* النتيجة والشهادة */
+        .report-details {
+            max-height: 350px;
+            overflow-y: auto;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .q-item {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .q-num {
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .correct-ans { color: #4ade80; font-weight: bold; }
+        .wrong-ans { color: #f87171; font-weight: bold; }
+        .user-ans { color: #cbd5e1; }
+
+        .certificate-box {
+            background: linear-gradient(135deg, #1e1b4b, #0f172a);
+            border: 2px solid var(--gold-color);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .certificate-box h2 {
+            color: var(--gold-color);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .student-name {
+            font-size: 1.4rem;
+            color: #38bdf8;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .cert-score {
+            font-size: 1.2rem;
+            color: #4ade80;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .whatsapp-hint {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-top: 8px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+<div class="timer-box" id="timer-box">⏱️ <span id="timer-display">90:00</span></div>
+<button class="scroll-top" id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="copy-success" id="copy-success">✅ تم نسخ التقرير إلى الحافظة!</div>
+
+<header>
+    <div class="header-content">
+        <div class="logo-section">
+            <div class="brand-text">
+                <h1>🧠 منصة كودجي - م/ اندرو مجدي</h1>
+                <p>الاختبار الأسبوعي: تقنيات التشفير والمصادقة (الوحدة الثانية: الأمن السيبراني)</p>
+            </div>
+        </div>
+        <div class="header-badges">
+            <span class="badge-ib">🛡️ الوحدة الثانية</span>
+            <span class="badge-ib">🔐 الدرس الأول</span>
+            <span class="badge-ib">🇪🇬 الثانوية العامة / البكالوريا</span>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="tab-nav" id="main-tabs">
+        <button class="tab-nav-btn" data-tab="instructions" onclick="switchMainTab('instructions')">📖 التعليمات</button>
+        <button class="tab-nav-btn active" data-tab="quiz" onclick="switchMainTab('quiz')">📝 الاختبار</button>
+        <button class="tab-nav-btn" data-tab="result" onclick="switchMainTab('result')">🏆 النتيجة</button>
+    </div>
+
+    <!-- تبويب التعليمات -->
+    <div class="tab-content" id="tab-instructions">
+        <section class="card">
+            <h2>📖 تعليمات الاختبار الأسبوعي</h2>
+            <div class="info-block warning">
+                <p style="font-size:1.05rem;line-height:2;">
+                    <strong>📌 مكونات الاختبار:</strong><br>
+                    • <strong>15 سؤال اختيار من متعدد</strong> (من كتاب التقييمات والكتاب المدرسي)<br>
+                    • <strong>8 أسئلة مقالية</strong> (من كتاب التقييمات والكتاب المدرسي)<br><br>
+
+                    <strong>⏱️ مدة الاختبار:</strong> 90 دقيقة<br>
+                    <strong>✅ عدد الأسئلة الكلي:</strong> 23 سؤالاً<br><br>
+
+                    <strong>📝 التعليمات:</strong><br>
+                    1. اقرأ كل سؤال بعناية قبل الإجابة.<br>
+                    2. للاختياري: اختر الإجابة الصحيحة.<br>
+                    3. للمقالي: اكتب إجابة منظمة ومفصلة مستمدة من فهمك للدرس.<br>
+                    4. بعد الانتهاء، اضغط "تأكيد إنهاء الاختبار وإرسال الإجابات".
+                </p>
+            </div>
+            <button class="btn" style="width:100%;padding:14px;margin-top:10px;" onclick="switchMainTab('quiz')">🚀 ابدأ الاختبار الآن</button>
+        </section>
+    </div>
+
+    <!-- تبويب الاختبار -->
+    <div class="tab-content active" id="tab-quiz">
+        <section class="card" id="quiz-setup">
+            <h2>📝 الاختبار الأسبوعي - الدرس الأول: تقنيات التشفير والمصادقة</h2>
+            <p style="color:var(--subtext-color);">15 سؤال اختيار من متعدد + 8 أسئلة مقالية (الكتاب المدرسي + التقييمات والأداءات الرسمية).</p>
+            <div style="margin:15px 0;">
+                <label style="display:block;margin-bottom:6px;font-weight:700;">👤 اسمك الثلاثي:</label>
+                <input type="text" id="student-name-input" placeholder="اكتب اسمك هنا..." style="width:100%;padding:12px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff;font-size:1rem;">
+            </div>
+            <button class="btn" style="width:100%;padding:14px;" onclick="startQuiz()">🚀 ابدأ الاختبار الآن</button>
+        </section>
+
+        <section class="card" id="quiz-container" style="display:none;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <h2 id="question-title" style="color:#fffffe;">السؤال 1</h2>
+                <span class="badge badge-accent" id="quiz-progress">1 من 23</span>
+            </div>
+            <div id="dynamic-quiz-area"></div>
+            <div id="feedback-area"></div>
+            <div class="nav-controls">
+                <button class="btn btn-secondary" id="prev-quiz" onclick="navigateQuiz(-1)">السابق</button>
+                <button class="btn" style="background:var(--accent-color);" onclick="checkCurrentAnswer()">🔍 تحقق</button>
+                <button class="btn btn-secondary" id="next-quiz" onclick="navigateQuiz(1)">التالي</button>
+            </div>
+            <button class="btn btn-success" style="width:100%;margin-top:20px;padding:14px;" onclick="submitQuiz()">✔ تأكيد إنهاء الاختبار وإرسال الإجابات</button>
+        </section>
+    </div>
+
+    <!-- تبويب النتيجة -->
+    <div class="tab-content" id="tab-result">
+        <section class="card" id="result-container" style="display:none;">
+            <h2>🎉 نتيجة الاختبار</h2>
+            <p id="score-summary" style="color:var(--subtext-color);font-size:1.1rem;line-height:2;"></p>
+            <div id="report-details-container" class="report-details"></div>
+            <div class="certificate-box" id="certificate">
+                <h2>📜 شهادة إتمام</h2>
+                <p>تشهد منصة كودجي بأن الطالب/الطالبة:</p>
+                <div class="student-name" id="cert-name">—</div>
+                <p>قد أتم بنجاح اختبار <b>الدرس الأول: تقنيات التشفير والمصادقة (الوحدة الثانية)</b></p>
+                <p class="cert-score" id="cert-score">🌟 النتيجة: 0%</p>
+                <div style="margin-top:25px;font-size:0.85rem;color:var(--subtext-color);">📅 تم التقييم آلياً بواسطة منصة كودجي 🤖</div>
+            </div>
+
+            <div style="margin-top:25px;">
+                <button class="btn btn-copy" onclick="copyReportToClipboard()">
+                    📋 انسخ التقرير وارسله عبر الواتساب لفريق المتابعة
+                </button>
+                <div class="whatsapp-hint">
+                    <span>💡</span>
+                    بعد الضغط على الزر، اذهب إلى واتساب وألصق التقرير (Paste) وأرسله للمهندس أندرو
+                </div>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:20px;">
+                <button class="btn btn-secondary" onclick="location.reload()">🔄 إعادة الاختبار</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // بيانات أسئلة الاختبار (15 اختياري + 8 مقالي = 23 سؤال)
+    // مستخرجة ومصوغة من الكتاب المدرسي والتقييمات للدرس الأول
+    // ============================================================
+    var quizData = [
+        // --- 15 أسئلة اختيار من متعدد (MCQs) ---
+        {
+            type: 'mcq',
+            q: "أي من التقنيات التالية يُستخدم أساساً لتشفير بيانات الجلسة بسرعة وكفاءة عالية بعد اكتمال عملية المصافحة؟",
+            opts: ["التشفير بالمفتاح العام", "التشفير المتماثل (Symmetric Encryption)", "التوقيع الرقمي", "الشهادة الرقمية"],
+            ans: 1
+        },
+        {
+            type: 'mcq',
+            q: "ماذا تُسمى الخطوات الخاصة بإنشاء الاتصال الآمن والتحقق من هوية الخادم واسم النطاق عبر بروتوكول HTTPS؟",
+            opts: ["مصافحة TLS (TLS Handshake)", "التوقيع الرقمي", "المصادقة الثنائية (2FA)", "التشفير المتماثل"],
+            ans: 0
+        },
+        {
+            type: 'mcq',
+            q: "أي من الخيارات التالية يمثل استخدام عاملين من فئتين مختلفتين تماماً (المعرفة والحيازة) في المصادقة الثنائية؟",
+            opts: [
+                "كلمة مرور + كلمة مرور ثانية نصية",
+                "كلمة مرور + كلمة مرور لمرة واحدة (OTP) ترسل للهاتف",
+                "بصمة الإصبع + التعرف على الوجه",
+                "اسم المستخدم + البريد الإلكتروني"
+            ],
+            ans: 1
+        },
+        {
+            type: 'mcq',
+            q: "ما المقصود بمصطلح 'المصادقة متعددة العوامل (MFA)'؟",
+            opts: [
+                "استخدام كلمة مرور واحدة معقدة تحتوي على رموز",
+                "استخدام عاملين أو أكثر من فئات مختلفة مثل المعرفة والحيازة والسمات الحيوية",
+                "استخدام تطبيق المصادقة دون كلمة مرور",
+                "التسجيل عبر حساب جوجل فقط"
+            ],
+            ans: 1
+        },
+        {
+            type: 'mcq',
+            q: "التقنية التي تساعد المتصفح على التحقق من هوية الخادم وارتباط الشهادة باسم النطاق هي:",
+            opts: ["التشفير المتماثل", "التوقيع الرقمي", "الشهادة الرقمية (Digital Certificate)", "المصادقة الثنائية"],
+            ans: 2
+        },
+        {
+            type: 'mcq',
+            q: "أي من التقنيات الآتية تكتشف التلاعب وانتحال الشخصية وتوفر دليلاً يدعم عدم التنصل (Non-repudiation)؟",
+            opts: ["التشفير المتماثل", "التوقيع الرقمي (Digital Signature)", "مصافحة TLS", "المصادقة الثنائية"],
+            ans: 1
+        },
+        {
+            type: 'mcq',
+            q: "أي من التالي يمثل خياراً خاطئاً لتمثيل المصادقة الثنائية لكونه يقتصر على فئة واحدة (عامل المعرفة)؟",
+            opts: [
+                "كلمة مرور + كلمة مرور لمرة واحدة ترسل للهاتف",
+                "كلمة مرور + بصمة الإصبع",
+                "كلمة مرور + كلمة مرور سرية إضافية",
+                "كلمة مرور + رمز من تطبيق المصادقة"
+            ],
+            ans: 2
+        },
+        {
+            type: 'mcq',
+            q: "بروتوكول HTTP المنقول عبر اتصال TLS مؤمن يوفر سرية البيانات وسلامتها أثناء النقل يُعرف بـ:",
+            opts: ["HTTPS", "FTP", "SMTP", "DNS"],
+            ans: 0
+        },
+        {
+            type: 'mcq',
+            q: "أي من الخيارات الآتية يمثل الفئات الثلاث لعوامل المصادقة متعددة العوامل (MFA)؟",
+            opts: [
+                "المعرفة، الحيازة، والسمات الحيوية",
+                "السرعة، الكفاءة، والتكلفة",
+                "المفتاح العام، المفتاح الخاص، والتشفير المتماثل",
+                "الهاتف، الحاسوب، والسحابة"
+            ],
+            ans: 0
+        },
+        {
+            type: 'mcq',
+            q: "زوج المفاتيح المرتبط (مفتاح عام ومفتاح خاص) يُستخدم في تشفير وتأمين بدء الاتصال في تقنية:",
+            opts: ["التشفير بالمفتاح العام (Public-Key Cryptography)", "التشفير المتماثل", "التوقيع الرقمي الفردي", "الكيوبت الكمومي"],
+            ans: 0
+        },
+        {
+            type: 'mcq',
+            q: "أي مما يلي يُعد مثالاً لعامل 'الحيازة (Possession)' في المصادقة الألمانية؟",
+            opts: [
+                "السؤال السري وتاريخ الميلاد",
+                "بطاقة ذكية أو رمز OTP مبعوث للهاتف",
+                "بصمة الأصبع أو قزحية العين",
+                "كلمة السر والرمز PIN"
+            ],
+            ans: 1
+        },
+        {
+            type: 'mcq',
+            q: "أي من الخيارات الآتية يمثل مثالاً لعامل 'السمات الحيوية (Biometrics)'؟",
+            opts: ["كلمة المرور النصية", "بصمة الأصبع أو التعرف على الوجه", "الهاتف المحمول", "البطاقة البنكية"],
+            ans: 1
+        },
+        {
+            type: 'mcq',
+            q: "لماذا يُعتبر التشفير المتماثل هو الخيار المفضل لتشفير بيانات الجلسة الفعلية مقارنة بالتشفير بالمفتاح العام؟",
+            opts: [
+                "لأن التشفير بالمفتاح العام غير مشفر بالكامل",
+                "لأن التشفير بالمفتاح العام بطيء نسبياً عند معالجة البيانات الكبيرة مقارنة بالتشفير المتماثل السريع",
+                "لأن التشفير المتماثل يمنع التلاعب بالشهادات",
+                "لأنه يعمل فقط على الهواتف"
+            ],
+            ans: 1
+        },
+        {
+            type: 'mcq',
+            q: "الجمع بين التشفير والشهادات الرقمية والمصادقة الثنائية في التطبيقات المصرفية يهدف إلى:",
+            opts: [
+                "تسهيل الحفظ على المستخدم",
+                "تقليل المخاطر عبر طبقات أمان متعددة فإذا تسربت كلمة السر يظل الحساب محمياً بالحيازة",
+                "جعل المشتريات مجانية",
+                "تسريع تصفح المواقع"
+            ],
+            ans: 1
+        },
+        {
+            type: 'mcq',
+            q: "ماذا يعني وجود رمز القفل وبروتوكول HTTPS في شريط عنوان المتصفح؟",
+            opts: [
+                "أن محتوى الموقع آمن ومضمون 100% وبدون أي خطر للاحتيال",
+                "أن الاتصال مشفر والشهادة مطابقة للعنوان لكنه لا يعطي ضماناً مطلقاً لمصداقية محتوى الموقع",
+                "أن الكمبيوتر خالٍ تماماً من الفيروسات",
+                "أن الموقع مجاني بالكامل"
+            ],
+            ans: 1
+        },
+
+        // --- 8 أسئلة مقالية (Essay Questions) ---
+        {
+            type: 'essay',
+            q: "اشرح كيف تعمل اتصالات HTTPS على حماية البيانات، وما دور بروتوكول TLS في توفير السرية والسلامة أثناء النقل؟"
+        },
+        {
+            type: 'essay',
+            q: "ميز بين التشفير بالمفتاح العام والتشفير المتماثل أثناء اتصال HTTPS، موضحاً سبب استخدام كل منهما في مرحلته."
+        },
+        {
+            type: 'essay',
+            q: "عرف المصادقة الثنائية (2FA)، واشرح كيف يقلل العامل المستقل الثاني (مثل الحيازة) من المخاطر عند تسرب كلمة المرور."
+        },
+        {
+            type: 'essay',
+            q: "قارن بين المصادقة الثنائية (2FA) والمصادقة متعددة العوامل (MFA) مع إعطاء مثال لكل فئة (المعرفة، الحيازة، السمات الحيوية)."
+        },
+        {
+            type: 'essay',
+            q: "اشرح الخطوات الرئيسية لـ 'مصافحة TLS (TLS Handshake)' بدءاً من فحص الشهادة الرقمية وحتى اشتقاق مفاتيح الجلسة."
+        },
+        {
+            type: 'essay',
+            q: "ناقش الفرق بين وظيفة الشهادة الرقمية ووظيفة التوقيع الرقمي في دعم عدم التنصل واكتشاف التلاعب."
+        },
+        {
+            type: 'essay',
+            q: "اشرح سيناريو كاملاً لكيفية تتكامل تقنيات الأمان (التشفير، الشهادات، 2FA، التوقيع الرقمي) عند الشراء عبر متجر إلكتروني."
+        },
+        {
+            type: 'essay',
+            q: "فسر العبارة: 'وسائل الأمان المتقدمة تقرر تقليل المخاطر عبر طبقات متعددة، ولكنها لا تعني أن الحماية مطلقة أو المحتوى موثوق 100%'."
+        }
+    ];
+
+    // ============================================================
+    // حالة الاختبار والتحكم في الواجهة
+    // ============================================================
+    var studentName = '';
+    var currentQuizIndex = 0;
+    var studentAnswers = new Array(quizData.length).fill(null);
+    var studentEssayAnswers = new Array(quizData.length).fill('');
+    var quizTimer = null;
+    var timeLeft = 5400;
+
+    function switchMainTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+        document.getElementById('tab-' + tab).classList.add('active');
+        document.querySelectorAll('.tab-nav-btn').forEach(function(el) { el.classList.remove('active'); });
+        document.querySelector('.tab-nav-btn[data-tab="' + tab + '"]').classList.add('active');
+    }
+
+    function updateProgress() {
+        var total = quizData.length;
+        var done = 0;
+        quizData.forEach(function(q, idx) {
+            if (q.type === 'mcq') {
+                if (studentAnswers[idx] !== null) done++;
+            } else {
+                if ((studentEssayAnswers[idx] || '').trim().length >= 5) done++;
+            }
+        });
+        var pct = Math.min(100, Math.round((done / total) * 100));
+        document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    function startQuiz() {
+        var nameInput = document.getElementById('student-name-input');
+        if (!nameInput.value.trim()) {
+            alert('⚠️ برجاء كتابة اسمك الثلاثي للبدء');
+            return;
+        }
+        studentName = nameInput.value.trim();
+        document.getElementById('quiz-setup').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        document.getElementById('timer-box').style.display = 'block';
+
+        if (quizTimer) clearInterval(quizTimer);
+        timeLeft = 5400;
+        quizTimer = setInterval(function() {
+            timeLeft--;
+            var mins = Math.floor(timeLeft / 60);
+            var secs = timeLeft % 60;
+            document.getElementById('timer-display').textContent =
+                (mins < 10 ? '0' + mins : mins) + ':' + (secs < 10 ? '0' + secs : secs);
+            if (timeLeft <= 0) {
+                clearInterval(quizTimer);
+                alert('⏰ انتهى وقت الاختبار!');
+                submitQuiz();
+            }
+        }, 1000);
+
+        loadQuizQuestion(0);
+    }
+
+    function loadQuizQuestion(index) {
+        var q = quizData[index];
+        if (!q) return;
+
+        document.getElementById('question-title').textContent = 'السؤال ' + (index + 1);
+        document.getElementById('quiz-progress').textContent = (index + 1) + ' من ' + quizData.length;
+
+        var area = document.getElementById('dynamic-quiz-area');
+        var html = '<div class="question-text">' + q.q + '</div>';
+
+        if (q.type === 'mcq') {
+            html += '<ul class="options-list">';
+            q.opts.forEach(function(opt, oi) {
+                var checked = (studentAnswers[index] === oi) ? 'checked' : '';
+                html += '<li class="option-item" onclick="selectOption(' + index + ', ' + oi + ')">';
+                html += '<input type="radio" name="q-' + index + '" id="opt-' + index + '-' + oi + '" value="' + oi + '" ' + checked + '>';
+                html += '<label for="opt-' + index + '-' + oi + '" style="cursor:pointer;width:100%;display:block;">' + opt + '</label>';
+                html += '</li>';
+            });
+            html += '</ul>';
+        } else {
+            var val = studentEssayAnswers[index] || '';
+            html += '<textarea id="essay-' + index + '" class="essay-area" placeholder="اكتب إجابتك هنا..." oninput="updateEssayAnswer(' + index + ', this.value)">' + val + '</textarea>';
+            html += '<div style="font-size:0.85rem;color:var(--subtext-color);">✍️ اكتب إجابة مفصلة ومنظمة من واقع فهمك للدرس.</div>';
+        }
+
+        area.innerHTML = html;
+        document.getElementById('feedback-area').innerHTML = '';
+        document.getElementById('prev-quiz').disabled = (index === 0);
+        document.getElementById('next-quiz').disabled = (index === quizData.length - 1);
+        updateProgress();
+    }
+
+    function selectOption(qIndex, optIdx) {
+        studentAnswers[qIndex] = optIdx;
+        var items = document.querySelectorAll('.option-item');
+        items.forEach(function(item, idx) {
+            var radio = item.querySelector('input');
+            if (radio) {
+                radio.checked = (idx === optIdx);
+            }
+        });
+        updateProgress();
+    }
+
+    function updateEssayAnswer(index, value) {
+        studentEssayAnswers[index] = value;
+        updateProgress();
+    }
+
+    function checkCurrentAnswer() {
+        var q = quizData[currentQuizIndex];
+        var fb = document.getElementById('feedback-area');
+
+        if (q.type === 'mcq') {
+            var selected = studentAnswers[currentQuizIndex];
+            if (selected === null || selected === undefined) {
+                fb.innerHTML = '<div class="feedback-msg wrong">⚠️ لم تختر إجابة بعد.</div>';
+                return;
+            }
+            var correct = (q.ans === selected);
+            var items = document.querySelectorAll('.option-item');
+            items.forEach(function(item, idx) {
+                item.classList.remove('correct', 'wrong');
+                if (idx === q.ans) item.classList.add('correct');
+                else if (idx === selected && !correct) item.classList.add('wrong');
+            });
+            if (correct) {
+                fb.innerHTML = '<div class="feedback-msg correct">🎉 إجابة صحيحة! أحسنت.</div>';
+            } else {
+                fb.innerHTML = '<div class="feedback-msg wrong">❌ إجابة خاطئة. الإجابة الصحيحة هي: ' + q.opts[q.ans] + '</div>';
+            }
+        } else {
+            var essayVal = studentEssayAnswers[currentQuizIndex] || '';
+            if (essayVal.trim().length < 10) {
+                fb.innerHTML = '<div class="feedback-msg wrong">⚠️ يرجى كتابة إجابة أطول (على الأقل 10 أحرف).</div>';
+            } else {
+                fb.innerHTML = '<div class="feedback-msg correct">✅ تم حفظ إجابتك المقالية.</div>';
+            }
+        }
+    }
+
+    function navigateQuiz(delta) {
+        var essayArea = document.getElementById('essay-' + currentQuizIndex);
+        if (essayArea) {
+            studentEssayAnswers[currentQuizIndex] = essayArea.value;
+        }
+        var newIdx = currentQuizIndex + delta;
+        if (newIdx >= 0 && newIdx < quizData.length) {
+            currentQuizIndex = newIdx;
+            loadQuizQuestion(currentQuizIndex);
+        }
+    }
+
+    function submitQuiz() {
+        var essayArea = document.getElementById('essay-' + currentQuizIndex);
+        if (essayArea) {
+            studentEssayAnswers[currentQuizIndex] = essayArea.value;
+        }
+
+        var unanswered = 0;
+        var mcqCorrect = 0;
+        var mcqTotal = 0;
+        var essayAnswered = 0;
+        var essayTotal = 0;
+
+        quizData.forEach(function(q, idx) {
+            if (q.type === 'mcq') {
+                mcqTotal++;
+                if (studentAnswers[idx] === q.ans) mcqCorrect++;
+                else if (studentAnswers[idx] === null) unanswered++;
+            } else {
+                essayTotal++;
+                var ans = studentEssayAnswers[idx] || '';
+                if (ans.trim().length >= 5) essayAnswered++;
+                else unanswered++;
+            }
+        });
+
+        if (unanswered > 0) {
+            if (!confirm('⚠️ لديك ' + unanswered + ' سؤالاً لم تجب عليه. هل تريد الإرسال على أي حال؟')) {
+                return;
+            }
+        }
+
+        clearInterval(quizTimer);
+        document.getElementById('timer-box').style.display = 'none';
+
+        var mcqPercent = mcqTotal > 0 ? Math.round((mcqCorrect / mcqTotal) * 100) : 0;
+        var essayPercent = essayTotal > 0 ? Math.round((essayAnswered / essayTotal) * 100) : 0;
+        var overall = Math.round((mcqPercent + essayPercent) / 2);
+
+        var reportHTML = '<h3 style="color:#fff;">📋 التقرير الشامل للإجابات</h3>';
+        quizData.forEach(function(q, idx) {
+            var num = idx + 1;
+            reportHTML += '<div class="q-item">';
+            reportHTML += '<div class="q-num">السؤال ' + num + ':</div>';
+            reportHTML += '<div>' + q.q + '</div>';
+            if (q.type === 'mcq') {
+                var userAns = studentAnswers[idx];
+                var isCorrect = (userAns === q.ans);
+                var correctText = q.opts[q.ans];
+                var userText = (userAns !== null && userAns !== undefined) ? q.opts[userAns] : 'لم يتم الإجابة';
+                var cls = isCorrect ? 'correct-ans' : 'wrong-ans';
+                var icon = isCorrect ? '✅' : '❌';
+                reportHTML += '<div>📌 الإجابة الصحيحة: <span class="correct-ans">' + correctText + '</span></div>';
+                reportHTML += '<div>👤 إجابة الطالب: <span class="' + cls + '">' + userText + '</span> ' + icon + '</div>';
+            } else {
+                var userText = studentEssayAnswers[idx] || 'لم يتم الإجابة';
+                reportHTML += '<div>👤 إجابة الطالب: <span class="user-ans">' + userText + '</span></div>';
+            }
+            reportHTML += '</div>';
+        });
+
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('result-container').style.display = 'block';
+        document.getElementById('score-summary').innerHTML =
+            '📊 <b style="color:#fff;">النتيجة النهائية:</b> ' + overall + '%<br>' +
+            '📝 اختيار من متعدد: ' + mcqCorrect + '/' + mcqTotal + ' (' + mcqPercent + '%)<br>' +
+            '✍️ مقالي: ' + essayAnswered + '/' + essayTotal + ' (' + essayPercent + '%)';
+
+        document.getElementById('report-details-container').innerHTML = reportHTML;
+        document.getElementById('cert-name').textContent = studentName;
+        document.getElementById('cert-score').textContent = '🌟 النتيجة: ' + overall + '%';
+
+        switchMainTab('result');
+        updateProgress();
+    }
+
+    function copyReportToClipboard() {
+        var reportLines = [];
+        reportLines.push('مرحباً مهندس أندرو 👋');
+        reportLines.push('');
+        reportLines.push('الطالب/الطالبة: ' + (studentName || 'طالب منصة كودجي'));
+        reportLines.push(document.getElementById('cert-score').textContent || '🌟 النتيجة: 100%');
+        reportLines.push('');
+        reportLines.push('📋 التقرير الشامل - الاختبار الأسبوعي للدرس الأول (تقنيات التشفير والمصادقة):');
+        reportLines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+        quizData.forEach(function(q, idx) {
+            var num = idx + 1;
+            var line = 'س' + num + ': ' + q.q;
+            if (q.type === 'mcq') {
+                var userAns = studentAnswers[idx];
+                var isCorrect = (userAns === q.ans);
+                var correctText = q.opts[q.ans];
+                var userText = (userAns !== null && userAns !== undefined) ? q.opts[userAns] : 'لم يجب';
+                var icon = isCorrect ? '✅' : '❌';
+                line += ' | صح: ' + correctText + ' | إجابتي: ' + userText + ' ' + icon;
+            } else {
+                var userText = studentEssayAnswers[idx] || 'لم يجب';
+                line += ' | إجابتي: ' + userText;
+            }
+            reportLines.push(line);
+        });
+
+        reportLines.push('');
+        reportLines.push('تم التقييم بواسطة منصة كودجي 🤖');
+
+        var fullReport = reportLines.join('\n');
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(fullReport).then(function() {
+                showCopySuccess();
+            }).catch(function() {
+                fallbackCopy(fullReport);
+            });
+        } else {
+            fallbackCopy(fullReport);
+        }
+    }
+
+    function fallbackCopy(text) {
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopySuccess();
+        } catch (err) {
+            alert('❌ حدث خطأ أثناء النسخ. برجاء نسخ التقرير يدوياً.');
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopySuccess() {
+        var el = document.getElementById('copy-success');
+        el.classList.add('show');
+        setTimeout(function() {
+            el.classList.remove('show');
+        }, 4000);
+    }
+
+    window.addEventListener('scroll', function() {
+        var btn = document.getElementById('scroll-top');
+        if (window.scrollY > 400) btn.style.display = 'block';
+        else btn.style.display = 'none';
+    });
+
+    window.addEventListener('DOMContentLoaded', function() {
+        switchMainTab('instructions');
+    });
+
+    window.switchMainTab = switchMainTab;
+    window.startQuiz = startQuiz;
+    window.selectOption = selectOption;
+    window.checkCurrentAnswer = checkCurrentAnswer;
+    window.submitQuiz = submitQuiz;
+    window.copyReportToClipboard = copyReportToClipboard;
+    window.navigateQuiz = navigateQuiz;
+    window.loadQuizQuestion = loadQuizQuestion;
+    window.updateEssayAnswer = updateEssayAnswer;
+</script>
+
+</body>
+</html>
